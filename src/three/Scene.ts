@@ -23,7 +23,7 @@ class Scene {
     scene.add(sphereLight);
 
     const rocketBody = new Rocket();
-    scene.add(rocketBody.parent);
+    scene.add(rocketBody.scene);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
@@ -32,10 +32,15 @@ class Scene {
 
     document.body.appendChild(renderer.domElement);
     document.body.appendChild(ARButton.createButton(renderer));
+    const controller = renderer.xr.getController(0);
+
+    const shot = () => {
+      rocketBody.shot();
+    };
+
+    controller.addEventListener("selectstart", shot);
 
     function animation(time: number) {
-      const controller = renderer.xr.getController(0);
-
       rocketBody.parent.position.set(
         controller.position.x,
         controller.position.y,
@@ -44,6 +49,10 @@ class Scene {
       rocketBody.parent.rotation.x = controller.rotation.x;
       rocketBody.parent.rotation.y = controller.rotation.y;
       rocketBody.parent.rotation.z = controller.rotation.z;
+
+      // for (let index = 0; index < rocketBody.rockets.length; index++) {
+      //   const element = rocketBody.rockets[index];
+      // }
 
       renderer.render(scene, camera);
     }
