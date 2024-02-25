@@ -1,12 +1,13 @@
 import * as THREE from "three";
 import { ARButton } from "three/examples/jsm/webxr/ARButton";
+import { Rocket } from "./Rocket";
 
 class Scene {
   constructor() {
     this.init();
   }
 
-  init() {
+  private init() {
     const width = window.innerWidth,
       height = window.innerHeight;
 
@@ -21,10 +22,8 @@ class Scene {
     const sphereLight = new THREE.HemisphereLight(0xb0b0b0, 0x080820, 1);
     scene.add(sphereLight);
 
-    const geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-    const material = new THREE.MeshStandardMaterial();
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    const rocketBody = new Rocket();
+    scene.add(rocketBody.parent);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
@@ -35,8 +34,16 @@ class Scene {
     document.body.appendChild(ARButton.createButton(renderer));
 
     function animation(time: number) {
-      mesh.rotation.x = time / 2000;
-      mesh.rotation.y = time / 1000;
+      const controller = renderer.xr.getController(0);
+
+      rocketBody.parent.position.set(
+        controller.position.x,
+        controller.position.y,
+        controller.position.z
+      );
+      rocketBody.parent.rotation.x = controller.rotation.x;
+      rocketBody.parent.rotation.y = controller.rotation.y;
+      rocketBody.parent.rotation.z = controller.rotation.z;
 
       renderer.render(scene, camera);
     }
