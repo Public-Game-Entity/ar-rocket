@@ -4,7 +4,9 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 class Rocket {
   parent!: THREE.Object3D<THREE.Object3DEventMap>;
   scene: THREE.Object3D<THREE.Object3DEventMap>;
-  rockets: any[];
+  rockets:
+    | { model: THREE.Object3D<THREE.Object3DEventMap>[]; direction: any }
+    | any;
   rocketModel: THREE.Group<THREE.Object3DEventMap> | any;
   constructor() {
     this.scene = new THREE.Object3D();
@@ -44,7 +46,14 @@ class Rocket {
           this.parent.position.y,
           this.parent.position.z
         );
-        this.rockets.push(gltf.scene);
+
+        const direction = this.parent.getWorldDirection(
+          new THREE.Vector3(0, 0, 0)
+        );
+        this.rockets.push({
+          model: gltf.scene,
+          direction: direction,
+        });
         this.scene.add(gltf.scene);
       },
       function (xhr) {
@@ -66,6 +75,7 @@ class Rocket {
         this.rocketModel = gltf.scene;
         this.rocketModel.scale.set(scale, scale, scale);
         this.rocketModel.rotation.set(-Math.PI / 2, 0, 0);
+
         this.parent.add(this.rocketModel);
       },
       function (xhr) {

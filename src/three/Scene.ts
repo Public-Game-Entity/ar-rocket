@@ -1,5 +1,7 @@
 import * as THREE from "three";
 import { ARButton } from "three/examples/jsm/webxr/ARButton";
+import { VRButton } from "three/examples/jsm/webxr/VRButton";
+
 import { Rocket } from "./Rocket";
 
 class Scene {
@@ -50,9 +52,16 @@ class Scene {
       rocketBody.parent.rotation.y = controller.rotation.y;
       rocketBody.parent.rotation.z = controller.rotation.z;
 
-      // for (let index = 0; index < rocketBody.rockets.length; index++) {
-      //   const element = rocketBody.rockets[index];
-      // }
+      for (let index = 0; index < rocketBody.rockets.length; index++) {
+        const speed = -0.08;
+
+        rocketBody.rockets[index].model.position.x +=
+          rocketBody.rockets[index].direction.x * speed;
+        rocketBody.rockets[index].model.position.y +=
+          rocketBody.rockets[index].direction.y * speed;
+        rocketBody.rockets[index].model.position.z +=
+          rocketBody.rockets[index].direction.z * speed;
+      }
 
       renderer.render(scene, camera);
     }
